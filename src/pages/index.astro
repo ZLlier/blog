@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { SITE_DESCRIPTION } from '../consts';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+---
+
+<Base description={SITE_DESCRIPTION}>
+  <section class="hero">
+    <p class="hero-tag">岛上笔记</p>
+    <h1 class="site-title">
+      雾岛<span class="lantern" aria-hidden="true"></span>
+    </h1>
+    <p class="hero-sub">技术笔记与生活随笔的小岛。写下来，雾才散得开。</p>
+  </section>
+
+  <section class="post-list">
+    {
+      posts.map((post) => <PostCard post={post} />)
+    }
+  </section>
+</Base>

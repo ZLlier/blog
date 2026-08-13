@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="关于">
+  <div class="page-head">
+    <h1>关于</h1>
+    <p class="sub">这座岛的一点介绍</p>
+  </div>
+
+  <article class="article">
+    <div class="prose">
+      <p>
+        这里是雾岛——一个用来写下来的地方。技术笔记、生活随笔，以及一些没想清楚的事。
+      </p>
+      <p>
+        这个博客由 <code>Typora + Astro + Cloudflare Pages</code> 驱动：
+        写 Markdown，<code>git push</code>，自动上线。
+      </p>
+      <p>
+        关于页的内容在 <code>src/pages/about.astro</code> 里，想改随时改。
+      </p>
+    </div>
+  </article>
+</Base>

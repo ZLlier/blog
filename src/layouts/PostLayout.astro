@@ -1,0 +1,40 @@
+---
+import Base from './Base.astro';
+import { render } from 'astro:content';
+import { formatDate } from '../lib/post';
+
+interface Props {
+  entry: any;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const cat = entry.data.tags[0] ?? null;
+---
+
+<Base title={entry.data.title} description={entry.data.excerpt}>
+  <article class="article">
+    <header class="post-header">
+      <div class="eyebrow">
+        {cat && <span class="post-cat">{cat}</span>}
+        <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+        <span>约 {entry.data.minutes} 分钟</span>
+      </div>
+      <h1>{entry.data.title}</h1>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <div class="tag-row">
+      {entry.data.tags.map((tag: string) => (
+        <a class="tag-chip" href={`/tags/${encodeURIComponent(tag)}/`}>#{tag}</a>
+      ))}
+    </div>
+
+    <p style="margin-top:2rem;">
+      <a href="/">← 返回首页</a>
+    </p>
+  </article>
+</Base>

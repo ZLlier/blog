@@ -1,0 +1,32 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+const counts = new Map<string, number>();
+for (const p of posts) {
+  for (const t of p.data.tags) {
+    counts.set(t, (counts.get(t) ?? 0) + 1);
+  }
+}
+const tags = [...counts.entries()].sort(
+  (a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh'),
+);
+---
+
+<Base title="标签">
+  <div class="page-head">
+    <h1>标签</h1>
+    <p class="sub">岛上的每一盏灯，都有自己的名字。</p>
+  </div>
+
+  <section class="tag-cloud">
+    {
+      tags.map(([tag, n]) => (
+        <a class="tag-chip" href={`/tags/${encodeURIComponent(tag)}/`}>
+          #{tag} <span class="tag-count">{n}</span>
+        </a>
+      ))
+    }
+  </section>
+</Base>
