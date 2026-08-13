@@ -6,18 +6,18 @@
    ============================================================ */
 
 :root {
-  --paper: #eae8e2;          /* 晨雾纸 */
-  --paper-raise: #f3f1eb;    /* 浮层/卡片 */
-  --ink: #33363d;            /* 湿石墨 */
-  --ink-soft: #6f727a;       /* 次级墨 */
-  --ink-faint: #9a9da4;      /* 淡墨 */
-  --line: #d8d5cc;           /* 雾线 */
+  --paper: #f0e7cb;          /* 米黄纸（暖调、低亮度，不刺眼） */
+  --paper-raise: #f5eede;    /* 浮层/卡片 */
+  --ink: #3b3a33;            /* 墨（微暖，柔化对比） */
+  --ink-soft: #75716a;       /* 次级墨 */
+  --ink-faint: #a09b90;      /* 淡墨 */
+  --line: #d9cfb9;           /* 雾线（暖） */
   --accent: #c0852f;         /* 灯塔灯 */
   --accent-deep: #8a5f1d;
   --sea: #55707e;            /* 海青（链接） */
-  --code-bg: #f1efe9;
-  --fog-1: rgba(255, 252, 246, 0.85);
-  --fog-2: rgba(205, 213, 220, 0.5);
+  --code-bg: #f4ecd6;
+  --fog-1: rgba(252, 247, 233, 0.85);
+  --fog-2: rgba(219, 209, 186, 0.5);
 
   --font-display: "Source Han Serif SC", "Noto Serif SC", "Songti SC", SimSun, Georgia, "Times New Roman", serif;
   --font-body: "Source Han Serif SC", "Noto Serif SC", "Songti SC", SimSun, "PingFang SC", "Microsoft YaHei", Georgia, serif;
