@@ -55,7 +55,10 @@ function yamlValue(s) {
 }
 
 function today() {
-  return new Date().toISOString().slice(0, 10);
+  // 用本地时区的日期（new Date().toISOString() 是 UTC，会差 8 小时）
+  const d = new Date();
+  const p = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 
 // ---------- 主流程 ----------

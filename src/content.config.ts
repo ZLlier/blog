@@ -69,36 +69,22 @@ const blog = defineCollection({
   // Astro 7：自定义 loader 用对象形态，load() 才会收到 context
   loader: {
     name: 'wudao-blog-loader',
-    load: async ({ store, parseData, renderMarkdown }) => {
-      if (!fs.existsSync(CONTENT_DIR)) return;
-      const files = fs
-        .readdirSync(CONTENT_DIR)
-        .filter((f) => f.endsWith('.md'))
-        .sort();
+    load: async ({ store, parseData, renderMarkdown, watcher, refreshContextData }) => {
+      await loadAll({ store, parseData, renderMarkdown });
 
-      for (const file of files) {
-        const id = file.slice(0, -3);
-        const abs = path.join(CONTENT_DIR, file);
-        const raw = fs.readFileSync(abs, 'utf-8');
-        const { data, body } = parseFrontmatter(raw);
-        if (!body.trim()) continue; // 空文件（0 字节旧笔记）跳过
-
-        // —— 缺失回退派生 ——
-        const h1 = body.match(/^#\s+(.+?)\s*$/m)?.[1] ?? null;
-        const title = data.title ?? h1 ?? id;
-        const date = data.date ? new Date(data.date) : fs.statSync(abs).mtime;
-        if (Number.isNaN(date.getTime())) continue; // 非法日期，跳过
-        const tags = data.tags ?? [];
-        const minutes = readingMinutes(body);
-        const excerpt = excerptFrom(body);
-
-        const parsed = await parseData({
-          id,
-          data: { title, date, tags, minutes, excerpt },
-        });
-        const fileURL = new URL(`./content/blog/${file}`, import.meta.url);
-        const rendered = await renderMarkdown(body, { fileURL });
-        store.set({ id, data: parsed, rendered });
+      // dev 模式下监听内容目录变化：新增/修改/删除文章自动重载（无需重启 dev）
+      // 机制：store.set 会防抖写盘 .astro/data-store.json，Vite 监听到变化后自动刷新页面
+      if (watcher) {
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        const schedule = (p: string) => {
+          const inBlog = p.includes('/content/blog/') || p.includes('\\content\\blog\\');
+          if (!inBlog) return; // 只关心文章文件
+          clearTimeout(timer);
+          timer = setTimeout(() => loadAll({ store, parseData, renderMarkdown }), 300);
+        };
+        watcher.on('add', schedule);
+        watcher.on('change', schedule);
+        watcher.on('unlink', schedule);
       }
     },
   },
@@ -110,5 +96,47 @@ const blog = defineCollection({
     excerpt: z.string(),
   }),
 });
+
+async function loadAll({
+  store,
+  parseData,
+  renderMarkdown,
+}: {
+  store: any;
+  parseData: any;
+  renderMarkdown: any;
+}) {
+  if (!fs.existsSync(CONTENT_DIR)) return;
+  store.clear(); // 重新加载前清空旧条目（防止删除的文件残留）
+  const files = fs
+    .readdirSync(CONTENT_DIR)
+    .filter((f) => f.endsWith('.md'))
+    .sort();
+
+  for (const file of files) {
+    const id = file.slice(0, -3);
+    const abs = path.join(CONTENT_DIR, file);
+    const raw = fs.readFileSync(abs, 'utf-8');
+    const { data, body } = parseFrontmatter(raw);
+    if (!body.trim()) continue; // 空文件（0 字节旧笔记）跳过
+
+    // —— 缺失回退派生 ——
+    const h1 = body.match(/^#\s+(.+?)\s*$/m)?.[1] ?? null;
+    const title = data.title ?? h1 ?? id;
+    const date = data.date ? new Date(data.date) : fs.statSync(abs).mtime;
+    if (Number.isNaN(date.getTime())) continue; // 非法日期，跳过
+    const tags = data.tags ?? [];
+    const minutes = readingMinutes(body);
+    const excerpt = excerptFrom(body);
+
+    const parsed = await parseData({
+      id,
+      data: { title, date, tags, minutes, excerpt },
+    });
+    const fileURL = new URL(`./content/blog/${file}`, import.meta.url);
+    const rendered = await renderMarkdown(body, { fileURL });
+    store.set({ id, data: parsed, rendered });
+  }
+}
 
 export const collections = { blog };
