@@ -1,6 +1,9 @@
 ---
 title: GIT入门
 date: 2026-08-14
+tags:
+  - 技术
+  - Git
 ---
 # GIT入门
 
