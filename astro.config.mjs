@@ -7,8 +7,8 @@ import { remarkRewriteMedia } from './src/remark/rewrite-media';
 
 // https://astro.build/config
 export default defineConfig({
-  // 正式域名：blog.2862239358.workers.dev（自定义域名到手后替换）
-  site: 'https://blog.2862239358.workers.dev',
+  // 正式域名：wudaoblog.top（自定义域名已绑定 Cloudflare Worker）
+  site: 'https://wudaoblog.top',
   integrations: [copyBlogMedia(), sitemap()],
   // 关闭开发模式右下角的悬浮调试工具条（Astro Dev Toolbar，只有英文且对博客无用）
   devToolbar: { enabled: false },
